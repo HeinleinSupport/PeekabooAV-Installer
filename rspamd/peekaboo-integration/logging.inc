@@ -1,0 +1,2 @@
+level = "info";
+type = "console";

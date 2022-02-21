@@ -91,11 +91,21 @@ services:
     stop_grace_period: 1m15s
     ports:
       - "8100:8100"
+  # ordinarily, rspamd uses redis, but this is only needed tofor some functionality
+  # as we only want/need peekabooav to work redis is not needed
+  # although if it is present, the peekaboo module does use it to cache data
+  # for anything more than a showcase, please run a redis alongside rspamd
+  rspamd:
+    image: peekabooav_rspamd
+    build: ./rspamd
     depends_on:
-      - mariadb
-      - cortex
-#    ports:
-#      - "0.0.0.0:10024:10024"
+      - peekabooav
+    healthcheck:
+      test: "/usr/bin/rspamadm control stat || exit 1"
+      interval: 1m
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   postfix_rx:
     image: peekabooav_postfix
     build: ./postfix
